@@ -534,22 +534,3 @@ public class CORS(configuration: Configuration) {
 internal enum class OriginCheckResult {
     OK, SkipCORS, Failed
 }
-//
-//internal fun checkOrigin(
-//    origin: String?,
-//    local: RequestConnectionPoint,
-//    allowSameOrigin: Boolean,
-//    hostsNormalized: Set<String>
-//) {
-//    val origin = call.request.headers.getAll(HttpHeaders.Origin)?.singleOrNull()
-//        ?.takeIf(this::isValidOrigin)
-//        ?: return
-//
-//    if (allowSameOrigin && call.isSameOrigin(origin)) return
-//
-//    if (!corsCheckOrigins(origin)) {
-//        context.respondCorsFailed()
-//        return
-//    }
-//
-//}
