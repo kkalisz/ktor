@@ -25,6 +25,7 @@ class CORSTest {
         assertEquals(OriginCheckResult.OK, feature.checkOrigin("do.t://host", dummyPoint()))
         assertEquals(OriginCheckResult.OK, feature.checkOrigin("digits11://host", dummyPoint()))
 
+        assertEquals(OriginCheckResult.TerminateSteps, feature.checkOrigin("a()://host", dummyPoint()))
         assertEquals(OriginCheckResult.TerminateSteps, feature.checkOrigin("1abc://host", dummyPoint()))
     }
 
