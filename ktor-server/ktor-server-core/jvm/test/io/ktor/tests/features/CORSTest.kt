@@ -10,17 +10,39 @@ import io.mockk.*
 import kotlin.test.*
 
 class CORSTest {
-    private val feature: CORS = CORS(CORS.Configuration())
 
     @Test
-    fun checkOrigin() {
-        assertEquals(
-            OriginCheckResult.Failed,
-            feature.checkOrigin("http://host", getConnectionPoint("http", "other", 80))
+    fun originValidation() {
+        val feature = CORS(
+            CORS.Configuration().apply {
+                allowSameOrigin = false
+                anyHost()
+            }
         )
+
         assertEquals(
-            OriginCheckResult.SkipCORS,
-            feature.checkOrigin("invalid", getConnectionPoint("http", "other", 80))
+            OriginCheckResult.OK,
+            feature.checkOrigin("hyp-hen://host", getConnectionPoint("hyp-hen", "host", 123))
+        )
+
+        assertEquals(
+            OriginCheckResult.OK,
+            feature.checkOrigin("plus+://host", getConnectionPoint("plus+", "host", 123))
+        )
+
+        assertEquals(
+            OriginCheckResult.OK,
+            feature.checkOrigin("do.t://host", getConnectionPoint("do.t", "host", 123))
+        )
+
+        assertEquals(
+            OriginCheckResult.OK,
+            feature.checkOrigin("numbers123://host", getConnectionPoint("numbers123", "host", 123))
+        )
+
+        assertEquals(
+            OriginCheckResult.TerminateSteps,
+            feature.checkOrigin("1abc://host", getConnectionPoint("1abc", "host", 123))
         )
     }
 

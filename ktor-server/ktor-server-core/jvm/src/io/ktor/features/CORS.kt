@@ -92,7 +92,7 @@ public class CORS(configuration: Configuration) {
 
         when (checkOrigin(origin, call.request.origin)) {
             OriginCheckResult.OK -> {}
-            OriginCheckResult.SkipCORS -> return
+            OriginCheckResult.TerminateSteps -> return
             OriginCheckResult.Failed -> {
                 context.respondCorsFailed()
                 return
@@ -131,8 +131,8 @@ public class CORS(configuration: Configuration) {
     }
 
     internal fun checkOrigin(origin: String, local: RequestConnectionPoint): OriginCheckResult = when {
-        !isValidOrigin(origin) -> OriginCheckResult.SkipCORS
-        allowSameOrigin && isSameOrigin(origin, local) -> OriginCheckResult.SkipCORS
+        !isValidOrigin(origin) -> OriginCheckResult.TerminateSteps
+        allowSameOrigin && isSameOrigin(origin, local) -> OriginCheckResult.TerminateSteps
         !corsCheckOrigins(origin) -> OriginCheckResult.Failed
         else -> OriginCheckResult.OK
     }
@@ -242,11 +242,12 @@ public class CORS(configuration: Configuration) {
             return false
         }
 
-        // check proto
-        for (index in 0 until protoDelimiter) {
-            if (!origin[index].isLetter()) {
-                return false
-            }
+        val protoValid = origin[0].isLetter() && origin.subSequence(0, protoDelimiter).all { ch ->
+            ch.isLetter() || ch.isDigit() || ch == '-' || ch == '+' || ch == '.'
+        }
+
+        if (!protoValid) {
+            return false
         }
 
         var portIndex = origin.length
@@ -532,5 +533,5 @@ public class CORS(configuration: Configuration) {
 }
 
 internal enum class OriginCheckResult {
-    OK, SkipCORS, Failed
+    OK, TerminateSteps, Failed
 }
