@@ -130,9 +130,9 @@ public class CORS(configuration: Configuration) {
         }
     }
 
-    internal fun checkOrigin(origin: String, local: RequestConnectionPoint): OriginCheckResult = when {
+    internal fun checkOrigin(origin: String, point: RequestConnectionPoint): OriginCheckResult = when {
         !isValidOrigin(origin) -> OriginCheckResult.TerminateSteps
-        allowSameOrigin && isSameOrigin(origin, local) -> OriginCheckResult.TerminateSteps
+        allowSameOrigin && isSameOrigin(origin, point) -> OriginCheckResult.TerminateSteps
         !corsCheckOrigins(origin) -> OriginCheckResult.Failed
         else -> OriginCheckResult.OK
     }
@@ -193,8 +193,8 @@ public class CORS(configuration: Configuration) {
         }
     }
 
-    private fun isSameOrigin(origin: String, local: RequestConnectionPoint): Boolean {
-        val requestOrigin = "${local.scheme}://${local.host}:${local.port}"
+    private fun isSameOrigin(origin: String, point: RequestConnectionPoint): Boolean {
+        val requestOrigin = "${point.scheme}://${point.host}:${point.port}"
         return normalizeOrigin(requestOrigin) == normalizeOrigin(origin)
     }
 
