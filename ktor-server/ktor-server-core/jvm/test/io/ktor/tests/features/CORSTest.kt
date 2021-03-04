@@ -20,30 +20,16 @@ class CORSTest {
             }
         )
 
-        assertEquals(
-            OriginCheckResult.OK,
-            feature.checkOrigin("hyp-hen://host", getConnectionPoint("hyp-hen", "host", 123))
-        )
+        assertEquals(OriginCheckResult.OK, feature.checkOrigin("hyp-hen://host", dummyPoint()))
+        assertEquals(OriginCheckResult.OK, feature.checkOrigin("plus+://host", dummyPoint()))
+        assertEquals(OriginCheckResult.OK, feature.checkOrigin("do.t://host", dummyPoint()))
+        assertEquals(OriginCheckResult.OK, feature.checkOrigin("digits11://host", dummyPoint()))
 
-        assertEquals(
-            OriginCheckResult.OK,
-            feature.checkOrigin("plus+://host", getConnectionPoint("plus+", "host", 123))
-        )
+        assertEquals(OriginCheckResult.TerminateSteps, feature.checkOrigin("1abc://host", dummyPoint()))
+    }
 
-        assertEquals(
-            OriginCheckResult.OK,
-            feature.checkOrigin("do.t://host", getConnectionPoint("do.t", "host", 123))
-        )
-
-        assertEquals(
-            OriginCheckResult.OK,
-            feature.checkOrigin("numbers123://host", getConnectionPoint("numbers123", "host", 123))
-        )
-
-        assertEquals(
-            OriginCheckResult.TerminateSteps,
-            feature.checkOrigin("1abc://host", getConnectionPoint("1abc", "host", 123))
-        )
+    private fun dummyPoint(): RequestConnectionPoint {
+        return getConnectionPoint("scheme", "host", 12345)
     }
 
     private fun getConnectionPoint(scheme: String, host: String, port: Int): RequestConnectionPoint {
