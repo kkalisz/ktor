@@ -5,8 +5,9 @@
 package io.ktor.client.engine.js
 
 import io.ktor.client.engine.*
-import io.ktor.client.features.*
 import io.ktor.client.engine.js.compatibility.*
+import io.ktor.client.engine.js.node.*
+import io.ktor.client.features.*
 import io.ktor.client.features.websocket.*
 import io.ktor.client.request.*
 import io.ktor.client.utils.*
@@ -22,7 +23,7 @@ internal class JsClientEngine(override val config: HttpClientEngineConfig) : Htt
 
     override val dispatcher = Dispatchers.Default
 
-    override val supportedCapabilities = setOf(HttpTimeout)
+    override val supportedCapabilities = setOf(HttpTimeout, WebSocketCapability)
 
     init {
         check(config.proxy == null) { "Proxy unsupported in Js engine." }
@@ -48,7 +49,8 @@ internal class JsClientEngine(override val config: HttpClientEngineConfig) : Htt
         return HttpResponseData(
             status,
             requestTime,
-            headers, version,
+            headers,
+            version,
             body,
             callContext
         )
@@ -61,11 +63,10 @@ internal class JsClientEngine(override val config: HttpClientEngineConfig) : Htt
         val requestTime = GMTDate()
 
         val urlString = request.url.toString()
-        val socket: WebSocket = if (PlatformUtils.IS_NODE) {
-            val ws = js("require('ws')")
-            js("new ws(urlString)")
+        val socket = if (PlatformUtils.IS_NODE) {
+            NodeWebsocket(urlString)
         } else {
-            js("new WebSocket(urlString)")
+            WebSocket(urlString)
         }
 
         try {
@@ -111,7 +112,7 @@ private suspend fun WebSocket.awaitConnection(): WebSocket = suspendCancellableC
     }
 }
 
-private fun io.ktor.client.fetch.Headers.mapToKtor(): Headers = buildHeaders {
+private fun org.w3c.fetch.Headers.mapToKtor(): Headers = buildHeaders {
     this@mapToKtor.asDynamic().forEach { value: String, key: String ->
         append(key, value)
     }
@@ -123,4 +124,4 @@ private fun io.ktor.client.fetch.Headers.mapToKtor(): Headers = buildHeaders {
  * Wrapper for javascript `error` objects.
  * @property origin: fail reason
  */
-class JsError(val origin: dynamic) : Throwable("Error from javascript[$origin].")
+public class JsError(public val origin: dynamic) : Throwable("Error from javascript[$origin].")

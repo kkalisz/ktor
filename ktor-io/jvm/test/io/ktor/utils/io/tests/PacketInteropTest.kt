@@ -3,8 +3,6 @@ package io.ktor.utils.io.tests
 import io.ktor.utils.io.core.*
 import io.ktor.utils.io.nio.*
 import io.ktor.utils.io.streams.*
-import org.junit.Test
-import org.junit.Ignore
 import java.io.*
 import java.nio.*
 import java.nio.ByteOrder
@@ -23,7 +21,7 @@ class PacketInteropTest {
         baos.writePacket {
             writeInt(777)
             writeLong(0x1234567812345678L)
-            writeStringUtf8("OK")
+            writeText("OK")
         }
 
         val result = ByteBuffer.wrap(baos.toByteArray())!!
@@ -70,7 +68,7 @@ class PacketInteropTest {
         out.writePacket {
             writeInt(777)
             writeLong(0x1234567812345678L)
-            writeStringUtf8("OK")
+            writeText("OK")
         }
         out.close()
 

@@ -2,8 +2,8 @@ package io.ktor.utils.io.tests
 
 import io.ktor.utils.io.core.*
 import io.ktor.utils.io.core.internal.*
-import kotlin.test.Test
 import kotlin.test.*
+import kotlin.test.Test
 
 open class BytePacketBuildTest {
     open val pool: VerifyingObjectPool<ChunkBuffer> = VerifyingObjectPool(ChunkBuffer.NoPool)
@@ -29,7 +29,7 @@ open class BytePacketBuildTest {
             writeLong(0x123456789abcdef0)
             writeLong(0x123456789abcdef0)
 
-            writeStringUtf8("OK\n")
+            writeText("OK\n")
             listOf(1, 2, 3).joinTo(this, separator = "|")
         }
 
@@ -67,7 +67,7 @@ open class BytePacketBuildTest {
             writeFloat(1.25f)
             writeLong(0x123456789abcdef0)
 
-            writeStringUtf8("OK\n")
+            writeText("OK\n")
             listOf(1, 2, 3).joinTo(this, separator = "|")
         }
 
@@ -297,6 +297,6 @@ open class BytePacketBuildTest {
     }
 
     companion object {
-        const val PACKET_BUFFER_SIZE: Int = 4096
+        public const val PACKET_BUFFER_SIZE: Int = 4096
     }
 }

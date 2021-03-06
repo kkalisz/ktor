@@ -5,9 +5,9 @@
 package io.ktor.util
 
 import io.ktor.util.cio.*
-import kotlinx.coroutines.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
+import kotlinx.coroutines.*
 import java.nio.*
 import java.util.zip.*
 
@@ -27,19 +27,18 @@ private infix fun Int.has(flag: Int) = this and flag != 0
 /**
  * Implementation of Deflate [Encoder].
  */
-val Deflate: Encoder = object : Encoder {
+public val Deflate: Encoder = object : Encoder {
     override fun CoroutineScope.encode(source: ByteReadChannel): ByteReadChannel =
         source.deflated(gzip = true, coroutineContext = coroutineContext)
 
     override fun CoroutineScope.decode(source: ByteReadChannel): ByteReadChannel =
         inflate(source, gzip = false)
-
 }
 
 /**
  * Implementation of GZip [Encoder].
  */
-val GZip: Encoder = object : Encoder {
+public val GZip: Encoder = object : Encoder {
     override fun CoroutineScope.encode(source: ByteReadChannel): ByteReadChannel =
         source.deflated(gzip = true, coroutineContext = coroutineContext)
 
@@ -104,6 +103,10 @@ private fun CoroutineScope.inflate(
             readBuffer.compact()
         }
 
+        if (source is ByteChannel) {
+            source.closedCause?.let { throw it }
+        }
+
         readBuffer.flip()
 
         while (!inflater.finished()) {
@@ -125,7 +128,6 @@ private fun CoroutineScope.inflate(
         } else {
             check(!readBuffer.hasRemaining())
         }
-
     } catch (cause: Throwable) {
         throw cause
     } finally {

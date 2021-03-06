@@ -44,7 +44,9 @@ class AbstractInputTest {
     @Test
     fun testCopy() {
         val items = arrayListOf(
-            "test.", "123.", "zxc."
+            "test.",
+            "123.",
+            "zxc."
         )
 
         val input = object : AbstractInput(pool = pool) {
@@ -70,5 +72,11 @@ class AbstractInputTest {
         val out = BytePacketBuilder(pool = pool)
         input.copyTo(out)
         assertEquals("test.123.zxc.", out.build().readText())
+    }
+
+    @Test
+    fun testReadMoreBytesThenExists() {
+        assertFailsWith<EOFException> { ByteReadPacket.Empty.readTextExactBytes(1) }
+        assertFailsWith<EOFException> { buildPacket { writeByte(1) }.readTextExactBytes(2) }
     }
 }

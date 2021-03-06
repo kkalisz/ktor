@@ -3,7 +3,6 @@ package io.ktor.utils.io.tests
 import io.ktor.utils.io.core.*
 import io.ktor.utils.io.core.internal.*
 import io.ktor.utils.io.streams.*
-import org.junit.Test
 import org.junit.Rule
 import java.util.*
 import kotlin.test.*
@@ -203,8 +202,6 @@ class BytePacketReaderWriterTest {
         assertEquals(s, packet.inputStream().readBytes().toString(Charsets.UTF_8))
     }
 
-
-
     @Test
     fun testSingleBufferReadAll() {
         val bb = ByteArray(100)
@@ -269,9 +266,9 @@ class BytePacketReaderWriterTest {
 
         val outer = buildPacket {
             append("123")
-            kotlin.test.assertEquals(3, size)
+            assertEquals(3, size)
             writePacket(inner)
-            kotlin.test.assertEquals(6, size)
+            assertEquals(6, size)
             append(".")
         }
 
@@ -322,9 +319,9 @@ class BytePacketReaderWriterTest {
 
         val outer = buildPacket {
             append("1234")
-            kotlin.test.assertEquals(4, size)
+            assertEquals(4, size)
             writePacket(inner)
-            kotlin.test.assertEquals(5, size)
+            assertEquals(5, size)
         }
 
         assertEquals("1234.", outer.readText())
@@ -339,9 +336,9 @@ class BytePacketReaderWriterTest {
 
         val outer = buildPacket {
             append("1234")
-            kotlin.test.assertEquals(4, size)
+            assertEquals(4, size)
             writePacket(inner)
-            kotlin.test.assertEquals(5, size)
+            assertEquals(5, size)
         }
 
         assertEquals("1234.", outer.readText())
@@ -356,9 +353,9 @@ class BytePacketReaderWriterTest {
 
         val outer = buildPacket {
             append("123")
-            kotlin.test.assertEquals(3, size)
+            assertEquals(3, size)
             writePacket(inner.copy())
-            kotlin.test.assertEquals(6, size)
+            assertEquals(6, size)
             append(".")
         }
 
@@ -375,9 +372,9 @@ class BytePacketReaderWriterTest {
 
         val outer = buildPacket {
             append("123")
-            kotlin.test.assertEquals(3, size)
+            assertEquals(3, size)
             writePacket(inner.copy())
-            kotlin.test.assertEquals(100003, size)
+            assertEquals(100003, size)
             append(".")
         }
 

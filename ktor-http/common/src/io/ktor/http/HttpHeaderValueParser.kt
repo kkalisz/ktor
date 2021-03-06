@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2020 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
 package io.ktor.http
@@ -11,11 +11,11 @@ import io.ktor.util.*
  * @property name of parameter
  * @property value of parameter
  */
-data class HeaderValueParam(val name: String, val value: String) {
+public data class HeaderValueParam(val name: String, val value: String) {
     override fun equals(other: Any?): Boolean {
-        return other is HeaderValueParam
-            && other.name.equals(name, ignoreCase = true)
-            && other.value.equals(value, ignoreCase = true)
+        return other is HeaderValueParam &&
+            other.name.equals(name, ignoreCase = true) &&
+            other.value.equals(value, ignoreCase = true)
     }
 
     override fun hashCode(): Int {
@@ -30,7 +30,7 @@ data class HeaderValueParam(val name: String, val value: String) {
  * @property value
  * @property params for this value (could be empty)
  */
-data class HeaderValue(val value: String, val params: List<HeaderValueParam> = listOf()) {
+public data class HeaderValue(val value: String, val params: List<HeaderValueParam> = listOf()) {
     /**
      * Value's quality according to `q` parameter or `1.0` if missing or invalid
      */
@@ -41,26 +41,30 @@ data class HeaderValue(val value: String, val params: List<HeaderValueParam> = l
 /**
  * Parse header value and sort multiple values according to qualities
  */
-fun parseAndSortHeader(header: String?): List<HeaderValue> = parseHeaderValue(header).sortedByDescending { it.quality }
+public fun parseAndSortHeader(header: String?): List<HeaderValue> =
+    parseHeaderValue(header).sortedByDescending { it.quality }
 
 /**
  * Parse `Content-Type` header values and sort them by quality and asterisks quantity
  */
-fun parseAndSortContentTypeHeader(header: String?): List<HeaderValue> = parseHeaderValue(header).sortedWith(
+public fun parseAndSortContentTypeHeader(header: String?): List<HeaderValue> = parseHeaderValue(header).sortedWith(
     compareByDescending<HeaderValue> { it.quality }.thenBy {
         val contentType = ContentType.parse(it.value)
         var asterisks = 0
-        if (contentType.contentType == "*")
+        if (contentType.contentType == "*") {
             asterisks += 2
-        if (contentType.contentSubtype == "*")
+        }
+        if (contentType.contentSubtype == "*") {
             asterisks++
+        }
         asterisks
-    }.thenByDescending { it.params.size })
+    }.thenByDescending { it.params.size }
+)
 
 /**
  * Parse header value respecting multi-values
  */
-fun parseHeaderValue(text: String?): List<HeaderValue> {
+public fun parseHeaderValue(text: String?): List<HeaderValue> {
     return parseHeaderValue(text, false)
 }
 
@@ -68,7 +72,7 @@ fun parseHeaderValue(text: String?): List<HeaderValue> {
  * Parse header value respecting multi-values
  * @param parametersOnly if no header value itself, only parameters
  */
-fun parseHeaderValue(text: String?, parametersOnly: Boolean): List<HeaderValue> {
+public fun parseHeaderValue(text: String?, parametersOnly: Boolean): List<HeaderValue> {
     if (text == null) {
         return emptyList()
     }
@@ -84,8 +88,7 @@ fun parseHeaderValue(text: String?, parametersOnly: Boolean): List<HeaderValue> 
 /**
  * Construct a list of [HeaderValueParam] from an iterable of pairs
  */
-@KtorExperimentalAPI
-fun Iterable<Pair<String, String>>.toHeaderParamsList(): List<HeaderValueParam> =
+public fun Iterable<Pair<String, String>>.toHeaderParamsList(): List<HeaderValueParam> =
     map { HeaderValueParam(it.first, it.second) }
 
 private fun <T> Lazy<List<T>>.valueOrEmpty(): List<T> = if (isInitialized()) value else emptyList()
@@ -156,7 +159,6 @@ private fun parseHeaderValueParameter(text: String, start: Int, parameters: Lazy
     addParam(text, start, position, "")
     return position
 }
-
 
 private fun parseHeaderValueParameterValue(value: String, start: Int): Pair<Int, String> {
     if (value.length == start) {

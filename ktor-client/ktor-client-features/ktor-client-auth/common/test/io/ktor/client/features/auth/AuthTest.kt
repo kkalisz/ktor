@@ -73,6 +73,7 @@ class AuthTest : ClientLoader() {
                     password = "pw"
                 }
             }
+            expectSuccess = false
         }
 
         test { client ->
@@ -157,5 +158,4 @@ class AuthTest : ClientLoader() {
             }
         }
     }
-
 }

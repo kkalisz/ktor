@@ -14,10 +14,7 @@ import kotlin.test.*
 class UploadTest : ClientLoader() {
 
     @Test
-    fun testUploadWithByteArrayContent() = clientTests(listOf("Android")) {
-        config {
-            install(Logging)
-        }
+    fun testUploadWithByteArrayContent() = clientTests(listOf("Android", "Curl")) {
         test { client ->
             val result = client.post<String>("$TEST_SERVER/upload/content") {
                 body = ByteArrayContent(ByteArray(1024))
@@ -29,11 +26,8 @@ class UploadTest : ClientLoader() {
 
     @Test
     fun testUploadWithEmptyContentType() = clientTests {
-        config {
-            install(Logging)
-        }
         test { client ->
-            val result =client.post<String>("$TEST_SERVER/upload/content") {
+            val result = client.post<String>("$TEST_SERVER/upload/content") {
                 body = ByteArrayContent(ByteArray(1024), ContentType("", ""))
             }
 

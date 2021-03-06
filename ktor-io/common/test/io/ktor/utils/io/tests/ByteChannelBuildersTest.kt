@@ -4,16 +4,16 @@
 
 package io.ktor.utils.io.tests
 
+import io.ktor.test.dispatcher.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.*
 import kotlin.test.*
-import io.ktor.test.dispatcher.*
 
 class ByteChannelBuildersTest {
     @Test
     fun testWriterCancelledByChannel() = testSuspend {
-        val context = Job()
-        val scope = CoroutineScope(context)
+        val job = Job()
+        val scope = CoroutineScope(coroutineContext + job)
 
         val task = scope.writer {
             val data = ByteArray(8 * 1024)
@@ -22,10 +22,10 @@ class ByteChannelBuildersTest {
             }
         }
 
-        context.complete()
+        job.complete()
         task.channel.cancel()
-        context.join()
+        job.join()
         assertTrue(task.isCancelled)
-        assertTrue(context.isCompleted)
+        assertTrue(job.isCompleted)
     }
 }

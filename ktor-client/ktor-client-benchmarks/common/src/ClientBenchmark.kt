@@ -25,26 +25,25 @@ private val testData = mutableMapOf(
 internal class ClientBenchmark {
     lateinit var client: HttpClient
 
-
-    @Param("Apache", "OkHttp", "Android", "CIO")// "Jetty")
+    @Param("Apache", "OkHttp", "Android", "CIO") // "Jetty")
     var zengineName: String = ""
 
     @Param("0", "1", "16", "32", "64", "256", "1024")
     var size: Int = 0
 
     @Setup
-    fun start() {
+    public fun start() {
         client = HttpClient(findEngine(zengineName))
     }
 
     @Benchmark
-    fun download() = runBenchmark {
+    public fun download() = runBenchmark {
         val data = client.get<ByteArray>("$TEST_BENCHMARKS_SERVER/bytes?size=$size")
         check(data.size == size * 1024)
     }
 
     @Benchmark
-    fun upload() = runBenchmark {
+    public fun upload() = runBenchmark {
         val uploaded = client.post<String>("$TEST_BENCHMARKS_SERVER/bytes") {
             body = testData[size]!!
         }
@@ -52,7 +51,7 @@ internal class ClientBenchmark {
     }
 
     @Benchmark
-    fun echoStream() = runBenchmark {
+    public fun echoStream() = runBenchmark {
         val uploaded = client.post<ByteArray>("$TEST_BENCHMARKS_SERVER/echo") {
             body = testData[size]!!
         }
@@ -61,7 +60,7 @@ internal class ClientBenchmark {
     }
 
     @Benchmark
-    fun echoStreamChain() = runBenchmark {
+    public fun echoStreamChain() = runBenchmark {
         val stream = client.post<ByteReadChannel>("$TEST_BENCHMARKS_SERVER/echo") {
             body = testData[size]!!
         }
@@ -74,7 +73,7 @@ internal class ClientBenchmark {
     }
 
     @TearDown
-    fun stop() {
+    public fun stop() {
         client.close()
     }
 }
